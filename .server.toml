@@ -1,0 +1,19 @@
+[app]
+name = "go-mysql"
+version = "0.0.1"
+host = "localhost"
+port = 8080
+read_timeout = 5
+write_timeout = 10
+idle_timeout = 15
+
+[auth]
+enable = false
+
+[database]
+host = "localhost"
+port = 5432
+name = "go_postgre_db"
+sslmode = "disable"
+username = "postgres"
+password = "123"

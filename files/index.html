@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>
+       Go Postgre Example
+    </title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="./css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="./css/custom.css" type="text/css" rel="stylesheet" media="screen,projection" />
+</head>
+
+<body>
+    <noscript>
+      <strong>We're sorry but Simple-21 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>  
+    <div id="app"> 
+
+        <!---------BACKGROUND---------->
+        <div id="bg"></div>
+        <div id="ghoper" class="hide-on-small-only"></div>
+        
+        <!---------LOADING---------->
+        <div class="preloader-background" v-show="false">
+            
+            <div class="valign-wrapper" style="width:100%;height:100%;position: absolute;">
+                <div class="valign" style="width:100%;">
+                    <div class="container">
+                        <div class="row">
+                            <div class="center col s12 m6 offset-m3">
+                            <div class="preloader-wrapper big active">
+                                <div class="spinner-layer spinner-blue-only">
+                                    <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                    </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <!---------MAIN PAGE---------->
+        <div v-show="getPageName == 'main-page'">
+ 
+            <h3 style="margin-left:auto;margin-right:auto;text-align:center">Data User</h3>
+            
+
+            <div class="container">
+                <div class="row">
+                    <div class="col m2 l2"></div>
+                    <div class="col s12 m8 l8">
+                        <a class="right waves-effect waves-light btn blue white-text modal-trigger" style="text-transform:none;" data-target="modal-add-user">
+                            <b><span> + </span></b>    
+                        </a>
+                        <table v-show="users.length == 0">
+                          <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th> </th>
+                                    <th> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th colspan=6 class="center">No Data User Found!</th>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table v-show="users.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th> </th>
+                                    <th> </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr v-for="(user,i) in users" v-bind:key="user.id">
+                                    <th>{{ i + 1 + query.offset }}</th>
+                                    <th>{{ user.id }}</th>
+                                    <th>{{ user.name }}</th>
+                                    <th>{{ user.email }}</th>
+                                    <th>
+                                        <a class="col s12 waves-effect waves-light btn blue white-text modal-trigger" style="text-transform:none;" data-target="modal-edit-user" @click="user_edit = user">
+                                            <i class="material-icons">edit</i>   
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a class="col s12 waves-effect waves-light btn red white-text" style="text-transform:none;" @click="deleteUser(user.id)" >
+                                            <i class="material-icons">delete</i>  
+                                        </a>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br /><br />
+
+                        <div class="center container">
+                            <a class="left waves-effect waves-light btn blue white-text" style="text-transform:none;" v-show="query.offset > 0" @click="query.offset -= (query.offset - query.limit) < 0 ? 0 : query.limit;listUser();query.page--">
+                                <b><span>&nbsp;&nbsp; < &nbsp;&nbsp;</span></b>    
+                            </a>
+                            <b><span> {{ query.page }} </span></b>  
+                            <a class="right waves-effect waves-light btn blue white-text" style="text-transform:none;" v-show="query.offset >= 0 && users.length > 0" @click="query.offset += query.limit;listUser();query.page++">
+                                <b><span>&nbsp;&nbsp; > &nbsp;&nbsp;</span></b>    
+                            </a>                          
+                        </div>
+                    </div>
+                    <div class="col m2 l2"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!---------MODAL ADD USER---------->
+        <div id="modal-add-user" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="center blue-text">
+                        <br />
+                        <span>Add User </span>
+                    </h5>
+                </div>
+                <div class="card-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col m2 l2"></div>
+                    <div class="col s12 m8 l8">
+                        <div class="input-field">
+                            <input id="add-name-form" type="text" v-model="user.name" :placeholder="user.name">
+                            <label for="add-name-form">Name</label>
+                        </div>
+                        <div class="input-field">
+                            <input id="add-email-form" type="text" v-model="user.email" :placeholder="user.email">
+                            <label for="add-email-form">Email</label>
+                        </div>
+                    </div>
+                    <div class="col m2 l2"></div>
+                </div>
+            </div>
+                </div>
+            </div>
+            <div class="center modal-footer">
+                <a class="center modal-close waves-effect waves-light btn blue white-text" style="text-transform:none;" @click="addUser" v-show="user.name != '' && user.email != ''">
+                    <b>
+                        <span>Add</span>
+                    </b>    
+                </a>
+                &nbsp;&nbsp;
+                <a class="center modal-close waves-effect waves-light btn-flat" style="text-transform:none;">
+                    <b>
+                        <span>Close</span>
+                    </b>    
+                </a>
+            </div>
+        </div>
+
+
+        <!---------MODAL EDIT USER---------->
+        <div id="modal-edit-user" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="center blue-text">
+                        <br />
+                        <span>Edit User </span>
+                    </h5>
+                </div>
+                <div class="card-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col m2 l2"></div>
+                    <div class="col s12 m8 l8">
+                        <div class="input-field">
+                            <input id="edit-name-form" type="text" v-model="user_edit.name" :placeholder="user_edit.name">
+                            <label for="edit-name-form">Edit Name</label>
+                        </div>
+                        <div class="input-field">
+                            <input id="edit-email-form" type="text" v-model="user_edit.email" :placeholder="user_edit.email">
+                            <label for="edit-email-form">Edit Email</label>
+                        </div>
+                    </div>
+                    <div class="col m2 l2"></div>
+                </div>
+            </div>
+                </div>
+            </div>
+            <div class="center modal-footer">
+                <a class="center modal-close waves-effect waves-light btn blue white-text" style="text-transform:none;" @click="updateUser(user_edit.id,user_edit)" v-show="user_edit.name != '' && user_edit.email != ''">
+                    <b>
+                        <span>Update</span>
+                    </b>    
+                </a>
+                &nbsp;&nbsp;
+                <a class="center modal-close waves-effect waves-light btn-flat" style="text-transform:none;">
+                    <b>
+                        <span>Close</span>
+                    </b>    
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <!-- built files will be auto injected -->
+    <!--  Scripts-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./js/materialize.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./main.js"></script>
+</body>
+
+</html>
