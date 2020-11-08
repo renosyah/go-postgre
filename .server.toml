@@ -1,5 +1,5 @@
 [app]
-name = "go-mysql"
+name = "go-postgre"
 version = "0.0.1"
 host = "localhost"
 port = 8080

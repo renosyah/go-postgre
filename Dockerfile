@@ -1,7 +1,7 @@
 # docker file for ayolescore app
 FROM golang:latest as builder
-ADD . /go/src/github.com/renosyah/simple-21
-WORKDIR /go/src/github.com/renosyah/simple-21
+ADD . /go/src/github.com/renosyah/go-postgre
+WORKDIR /go/src/github.com/renosyah/go-postgre
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 RUN rm -rf /api
